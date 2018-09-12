@@ -1,0 +1,73 @@
+*camelspell.txt* add spell checking support for camelCase words
+
+==============================================================================
+CONTENTS                                                 *camelspell-contents*
+
+    1. Introduction ..........|camelspell-introduction|
+    2. Commands ............. |camelspell-commands|
+    3. Options .............. |camelspell-options|
+    4. License .............. |camelspell-license|
+
+==============================================================================
+1. INTRODUCTION                                      *camelspell-introduction*
+
+Plugin that adds spell checking support for camelCase words.
+It overrides vim's built in spellchecker only for camelCase words.
+
+==============================================================================
+2. COMMANDS                                              *camelspell-commands*
+
+------------------------------------------------------------------------------
+:CamelspellCheck                                            *:CamelspellCheck*
+  Check for camelCase spelling mistakes
+
+------------------------------------------------------------------------------
+:CamelspellList                                              *:CamelspellList*
+  List all camelCase spelling mistakes
+
+==============================================================================
+3. OPTIONS                                                *camelspell-options*
+
+------------------------------------------------------------------------------
+                                                          *'camelspell_delay'*
+Use this option to set time after which spell check willbe run after text is
+changed.
+
+Default: 300. Values: integer.
+>
+  let g:camelspell_delay = 300
+<
+
+------------------------------------------------------------------------------
+                                               *'camelspell_check_on_startup'*
+Use this option to run spell check on file open.
+
+Default: 1. Values: integer.
+>
+  let g:camelspell_check_on_startup = 1
+<
+
+------------------------------------------------------------------------------
+                                           *'camelspell_check_on_text_change'*
+Use this option to run spell check on text change.
+
+Default: 1. Values: integer.
+>
+  let g:camelspell_check_on_text_change = 1
+<
+
+------------------------------------------------------------------------------
+                                                  *'camelspell_check_on_save'*
+Use this option to run spell check on file save.
+
+Default: 1. Values: integer.
+>
+  let g:camelspell_check_on_save = 1
+<
+
+
+==============================================================================
+4. LICENSE                                                *camelspell-license*
+
+The MIT Licence
+http://www.opensource.org/licenses/mit-license.php

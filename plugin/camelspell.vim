@@ -35,20 +35,16 @@ endif
 " Local timer_id for s:SpellCheck
 let s:timer_id = 0
 
-function! CamelSpellCheck(id)
+function! s:CamelspellCheck(id)
   let s:timer_id = a:id
   python3 camelspell.spell_check()
-endfunction
-
-function! CamelSpellList()
-  python3 camelspell.display_spell_errors()
 endfunction
 
 function! s:DelayedSpellCheck()
   if s:timer_id
     call timer_stop(s:timer_id)
   endif
-  call timer_start(g:camelspell_delay, function('CamelSpellCheck'))
+  call timer_start(g:camelspell_delay, function('s:CamelspellCheck'))
 endfunction
 
 set spell
@@ -56,7 +52,7 @@ highlight link CamelCaseError SpellBad
 
 " Ignore CamelCase words when spell checking
 function! IgnoreCamelCaseSpell()
-  syn match CamelCase '\([a-z0-9]\+\)\?\([A-Z]\+[a-z0-9]\+\)\+' contains=@NoSpell transparent
+  syn match CamelCase '\m\C\([a-z0-9]\+\)\?\([A-Z]\+[a-z0-9]\+\)\+' contains=@NoSpell transparent
   syn cluster Spell add=CamelCase
 endfun
 
@@ -68,7 +64,7 @@ augroup END
 augroup spellcheck
   autocmd!
   if camelspell_check_on_startup
-    autocmd BufRead * :call CamelSpellCheck(0)
+    autocmd BufRead * :call s:CamelspellCheck(0)
   endif
   if camelspell_check_on_text_change
     autocmd TextChangedI * :call s:DelayedSpellCheck()
@@ -78,3 +74,6 @@ augroup spellcheck
     autocmd BufWrite * :call s:DelayedSpellCheck()
   endif
 augroup END
+
+command! -nargs=0 CamelspellCheck :python3 camelspell.spell_check()
+command! -nargs=0 CamelspellList :python3 camelspell.display_spell_mistakes()

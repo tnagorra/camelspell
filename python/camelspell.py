@@ -82,7 +82,7 @@ def spell_check():
     bad_camelcase_words[buffer_id] = new_bad_camelcase_words
 
 
-def display_spell_errors():
+def display_spell_mistakes():
     buffer_id = vim.current.buffer
     current_bad_camelcase_words = bad_camelcase_words.get(buffer_id, set())
     current_match_keys = match_keys.get(buffer_id, {})
