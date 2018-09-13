@@ -1,7 +1,7 @@
 import vim
 import re
 
-camelcase_re = re.compile(r'(?:[a-z0-9]+)?(?:[A-Z]+[a-z0-9]+)+')
+camelcase_re = re.compile(r'[0-9A-Za-z]+(?:[A-Z][a-z0-9]+|(?<![A-Z])[A-Z]+)(?!\w)')
 first_cap_re = re.compile('(.)([A-Z][a-z]+)')
 all_cap_re = re.compile('([a-z0-9])([A-Z])')
 

@@ -45,6 +45,32 @@ let g:camelspell_check_on_text_change = 1
 let g:camelspell_check_on_save = 1
 ```
 
+# Regex for camelCase detection
+
+```
+# vim regex
+\v(\a|\d)+(\u(\l|\d)+|\u@<!\u+)(\w)@!
+
+# python regex
+[0-9A-Za-z]+(?:[A-Z][a-z0-9]+|(?<![A-Z])[A-Z]+)(?!\w)
+
+# Following words are camelcase
+PescalXXXCase
+cemelXXXCase
+XXXPescalCase
+XXXcemelCase
+I18Word
+pescalCASE
+cemelCASE
+
+# Following words are not camelcase
+CEMEL_CASE
+CEMEL
+snek_case
+Snekcase
+Snek_case
+```
+
 ## TODO
 
 - Jump to errors highlighted by camelspell

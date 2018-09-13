@@ -52,7 +52,7 @@ highlight link CamelCaseError SpellBad
 
 " Ignore CamelCase words when spell checking
 function! IgnoreCamelCaseSpell()
-  syn match CamelCase '\m\C\([a-z0-9]\+\)\?\([A-Z]\+[a-z0-9]\+\)\+' contains=@NoSpell transparent
+  syn match CamelCase '\v(\a|\d)+(\u(\l|\d)+|\u@<!\u+)(\w)@!' contains=@NoSpell transparent
   syn cluster Spell add=CamelCase
 endfun
 
