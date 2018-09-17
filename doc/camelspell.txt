@@ -33,9 +33,9 @@ It overrides vim's built in spellchecker only for camelCase words.
 Use this option to set time after which spell check willbe run after text is
 changed.
 
-Default: 300. Values: integer.
+Default: 500. Values: integer.
 >
-  let g:camelspell_delay = 300
+  let g:camelspell_delay = 500
 <
 
 ------------------------------------------------------------------------------

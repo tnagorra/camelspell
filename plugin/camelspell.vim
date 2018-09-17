@@ -20,7 +20,7 @@ EOF
 
 " Set default values
 if !exists('g:camelspell_delay')
-  let g:camelspell_delay = 300
+  let g:camelspell_delay = 500
 endif
 if !exists('g:camelspell_check_on_startup')
   let g:camelspell_check_on_startup = 1
@@ -37,6 +37,7 @@ let s:timer_id = 0
 
 function! s:CamelspellCheck(id)
   let s:timer_id = a:id
+  breakadd here
   python3 camelspell.spell_check()
 endfunction
 

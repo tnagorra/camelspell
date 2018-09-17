@@ -1,91 +1,77 @@
 import vim
 import re
 
-camelcase_re = re.compile(r'[0-9A-Za-z]+(?:[A-Z][a-z0-9]+|(?<![A-Z])[A-Z]+)(?!\w)')
+cc_re = re.compile(r'[0-9A-Za-z]+(?:[A-Z][a-z0-9]+|(?<![A-Z])[A-Z]+)(?!\w)')
 first_cap_re = re.compile('(.)([A-Z][a-z]+)')
 all_cap_re = re.compile('([a-z0-9])([A-Z])')
 
-bad_camelcase_words = {}
-match_keys = {}
+# Use same data structure
+all_bad_words = {}
 
 
-def memoize(func):
-    cache = dict()
-
-    def memoized_func(*args):
-        if args in cache:
-            return cache[args]
-        result = func(*args)
-        cache[args] = result
-        return result
-
-    return memoized_func
-
-
-@memoize
-def convert(word):
+def _convert(word):
     foo = first_cap_re.sub(r'\1_\2', word)
     bar = all_cap_re.sub(r'\1_\2', foo).lower()
     return bar.split('_')
 
 
-@memoize
-def spellcheck_word(word):
+def _spellcheck_word(word):
     op = vim.eval('spellbadword("{}")'.format(word))
     return op[0] != ''
 
 
-@memoize
-def find_camelcase_words(sentence):
-    return camelcase_re.findall(sentence)
+def _find_cc_words(sentence):
+    return cc_re.findall(sentence)
+
+
+def _find_all_cc_words(sentences):
+    cc_words = set()
+    for sentence in sentences:
+        words = _find_cc_words(sentence)
+        if words is not None:
+            cc_words |= set(words)
+    return cc_words
+
+
+def is_bad_word(cc_word):
+    sub_words = _convert(cc_word)
+    if sub_words:
+        bad_sub_words = filter(_spellcheck_word, sub_words)
+        return any(bad_sub_words)
+    return False
 
 
 def spell_check():
-    global bad_camelcase_words
+    global all_bad_words
     buffer_id = vim.current.buffer
+    bad_words = all_bad_words.get(buffer_id, {})
 
-    # must be dict
-    current_bad_camelcase_words = bad_camelcase_words.get(buffer_id, set())
-    # must be emptyset if not
-    current_match_keys = match_keys.get(buffer_id, {})
-
+    # Get lines from current buffer
     lines = vim.eval('getline(1,"$")')
-    camelcase_words = set()
-    for line in lines:
-        words = find_camelcase_words(line)
-        if words is not None:
-            camelcase_words |= set(words)
 
-    new_bad_camelcase_words = set()
-    for camelcase_word in camelcase_words:
-        sub_words = convert(camelcase_word)
-        if sub_words:
-            bad_sub_words = filter(spellcheck_word, sub_words)
-            if any(bad_sub_words):
-                new_bad_camelcase_words.add(camelcase_word)
+    new_bad_words = {s for s in _find_all_cc_words(lines) if is_bad_word(s)}
 
-    obsolete_words = current_bad_camelcase_words - new_bad_camelcase_words
-    hot_words = new_bad_camelcase_words - current_bad_camelcase_words
+    words_to_delete = bad_words.keys() - new_bad_words
+    words_to_add = new_bad_words - bad_words.keys()
 
-    if hot_words:
-        for word in hot_words:
-            current_match_keys[word] = vim.eval(
-                'matchadd("CamelCaseError", "{}")'.format(word)
-            )
-    match_keys[buffer_id] = current_match_keys
+    # Remove from bad_words and delete match
+    for word in words_to_delete:
+        identifier = bad_words.pop(word)
+        vim.eval('matchdelete({})'.format(identifier))
 
-    if obsolete_words:
-        for word in obsolete_words:
-            id = current_match_keys.pop(word)
-            vim.eval('matchdelete({})'.format(id))
+    # Add to bad_words and add match
+    for word in words_to_add:
+        bad_words[word] = vim.eval(
+            'matchadd("CamelCaseError", "{}")'.format(word)
+        )
 
-    bad_camelcase_words[buffer_id] = new_bad_camelcase_words
+    # set bad_words to all_bad_words
+    all_bad_words[buffer_id] = bad_words
 
 
 def display_spell_mistakes():
     buffer_id = vim.current.buffer
-    current_bad_camelcase_words = bad_camelcase_words.get(buffer_id, set())
-    current_match_keys = match_keys.get(buffer_id, {})
+    bad_words = all_bad_words.get(buffer_id, {})
 
-    for word in sorted(current_bad_camelcase_words):
-        print(word, current_match_keys.get(word))
+    for word in sorted(bad_words.keys()):
+        print(word)
