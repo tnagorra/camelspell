@@ -41,7 +41,7 @@ def is_bad_word(cc_word):
     return False
 
 
-def spell_check():
+def spellcheck():
     global all_bad_words
     buffer_id = vim.current.buffer
     bad_words = all_bad_words.get(buffer_id, {})

@@ -37,8 +37,7 @@ let s:timer_id = 0
 
 function! s:CamelspellCheck(id)
   let s:timer_id = a:id
-  breakadd here
-  python3 camelspell.spell_check()
+  python3 camelspell.spellcheck()
 endfunction
 
 function! s:DelayedSpellCheck()
@@ -76,5 +75,5 @@ augroup spellcheck
   endif
 augroup END
 
-command! -nargs=0 CamelspellCheck :python3 camelspell.spell_check()
+command! -nargs=0 CamelspellCheck :python3 camelspell.spellcheck()
 command! -nargs=0 CamelspellList :python3 camelspell.display_spell_mistakes()
